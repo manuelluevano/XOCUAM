@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "514940049561",
+    "project_id": "xocuam-notifications",
+    "storage_bucket": "xocuam-notifications.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:514940049561:android:5a81773d2b7df5a4c64008",
+        "android_client_info": {
+          "package_name": "com.xocuam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "514940049561-bsaq9miuubmqa0k43umbeabn1opfgtn1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdGu6VXwKRzY6o5YXas7Y_1sVXgEhDv5E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "514940049561-bsaq9miuubmqa0k43umbeabn1opfgtn1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
