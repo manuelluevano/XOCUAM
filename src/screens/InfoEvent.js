@@ -24,7 +24,7 @@ import { eventosSuscritos } from "../API/events";
 import { useWindowDimensions } from "react-native";
 import RenderHtml from "react-native-render-html";
 import ImageView from "react-native-image-viewing";
-import * as Notification from "expo-notifications";
+import * as Notifications from "expo-notifications";
 
 const InfoEvent = (props) => {
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ const InfoEvent = (props) => {
   // console.log("Dartos del route", route.params?.userID);
   const navigation = useNavigation();
   const [token, setToken] = useState(null);
-  const [dateNotification, setDate] = React.useState(new Date());
+  // const [dateNotification, setDate] = React.useState(new Date());
 
   //OBETNER EL TOKEN DE NOTIFICATION
   useEffect(() => {
@@ -52,8 +52,8 @@ const InfoEvent = (props) => {
     // obtenerMisEventos();
   }, []);
 
-  var fechaEvento = route.params.EventStartDate.substring(8, 10);
-  var fechaActual = new Date().toLocaleString().substring(2, 3);
+  // var fechaEvento = route.params.EventStartDate.substring(8, 10);
+  // var fechaActual = new Date().toLocaleString().substring(2, 3);
 
   //ENVIAMOS NOTIFICACION DE EVENTOS QUE ESTEN A 15 DIAS DE INICIAR
   //PRIMERO OBTENEMOS LOS EVENTOS DEL USUARIO
@@ -67,6 +67,7 @@ const InfoEvent = (props) => {
     } catch (error) {}
   }
 
+  //
   useEffect(() => {
     (async () => {
       await obtenerEvento();
@@ -88,102 +89,102 @@ const InfoEvent = (props) => {
     } catch (error) {}
   };
 
-  // async function sendPushNotification() {
-  //   try {
-  //     console.log("Enviando Notification..");
-  //     // const trigger = new Date(Date.now() + 60 * 60 * 1000);
-  //     // const trigger = new Date();
-  //     // console.log("NOTIFICATION", trigger);
-  //     // trigger.setMinutes(0);
-  //     // trigger.setSeconds(0);
-  //     await Notification.scheduleNotificationAsync({
-  //       content: {
-  //         title: "Code With Beto!",
-  //         body: "This is a test notification",
-  //       },
-  //       trigger: {
-  //         seconds: 5,
-  //         repeat: true,
-  //       },
-  //       // trigger: {
-  //       //   hour: 2,
-  //       //   minute: 25,
-  //       //   repeats: true,
-  //       // },
-  //     });
-  //   } catch (error) {
-  //     alert("Notification error");
-  //   }
-  //   //   // console.log(route.params);
-  //   //   // if (fechaEvento - fechaActual <= 9) {
-  //   //   //   console.log(
-  //   //   //     "Fecha del evento",
-  //   //   //     fechaEvento,
-  //   //   //     " ",
-  //   //   //     "fecha actual",
-  //   //   //     fechaActual
-  //   //   //   );
-  //   //   // }
-  //   //   // if (token !== null) {
-  //   // try {
-  //   //   console.log("Enviando Notificación");
-  //   //   const message = {
-  //   //     to: token,
-  //   //     sound: "default",
-  //   //     title: "Hola ",
-  //   //     body: "Quedan " + "🥳",
-  //   //     data: { someData: "goes here" },
-  //   //   };
-  //   //   await fetch("https://exp.host/--/api/v2/push/send", {
-  //   //     method: "POST",
-  //   //     headers: {
-  //   //       Accept: "application/json",
-  //   //       "Accept-encoding": "gzip, deflate",
-  //   //       "Content-Type": "application/json",
-  //   //     },
-  //   //     body: JSON.stringify(message),
-  //   //     categoryIdentifier: "replyMessage",
-  //   //   });
-  //   // } catch (error) {}
-  // }
+  useEffect(() => {
+    //   //ESCUCHAR NOTIFICACION
+    const suscription = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        console.log("Notification received");
+      }
+    );
 
-  async function handleNotification() {
-    // const newDate = new Date(Date.now() + 60 * 60 * 1000);
+    //EVENTO AL TOCAR LA NOTIFICACION
+    const suscription2 = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        console.log("Notification response ");
+      }
+    );
 
-    // console.log("Fecha actual", newDate);
-    // const fecha
-    // const trigger = new Date(fecha).getTime() + 24 * 60 * 60 * 1000;
+    //ELIMINAMOS LA SUSCRIPCION DEL EVENTO PARA EL TEMA DE MEMORIA
+    return () => {
+      console.log("remove suscription");
+      suscription.remove();
+      suscription2.remove();
+    };
+  }, []);
 
-    //ENVIAR NOTIFICATION AL SIGUIENTE MINUTO
-    // const trigger = new Date(Date.now() + 1 * 60 * 1000);
-    // const trigger = new Date("2023-02-03T08:03:32.352Z");
+  const getCurrentDate = (fechaEvento) => {
+    const year = fechaEvento.substr(0, 4);
+    const month = fechaEvento.substr(5, 2);
+    const dia = fechaEvento.substr(8, 2);
+    const nuevoDia = dia - 3;
 
-    var dateobj = new Date();
+    if (month > 9) {
+      return year + "-" + month + "-" + nuevoDia; //format: d-m-y;
+    } else {
+      return year + "-" + month + "-" + nuevoDia; //format: d-m-y;
+    }
+  };
 
-    var B = dateobj.toISOString();
+  async function scheduleNotificationHandler(fechaEvento, datosNotificacion) {
+    const result = getCurrentDate(fechaEvento);
+    console.log("Evento el dia:", fechaEvento);
+    console.log("Notificacion el dia:", result);
+
+    const trigger = new Date(result);
 
     // trigger.setMinutes(0);
     // trigger.setSeconds(0);
-    // new Date('October 15, 1996 05:35:32');
-    console.log("Fecha Evento", eventosDetails.EventStartDate);
-    console.log("Fecha Seleccionada", B);
-    try {
-      const id = await Notification.scheduleNotificationAsync({
-        content: {
-          title: "Notificacion!",
-          body: "This is a test notification",
-        },
-        trigger,
-        // trigger: {
-        //   seconds: 5,
-        //   repeats: false,
-        // },
-      });
-      alert(`Notification shcedualed!, ${id}`);
-    } catch (err) {
-      alert("The notification failed to schedule, make sure the hour is valid");
-    }
+    console.log("Datos de la notificacion", datosNotificacion);
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Cartelera UAMX",
+        body: datosNotificacion.EventName,
+        // data: "",
+      },
+      trigger,
+      // seconds: 1,
+      // },
+    });
   }
+
+  // async function handleNotification() {
+  //   //   // const newDate = new Date(Date.now() + 60 * 60 * 1000);
+
+  //   //   // console.log("Fecha actual", newDate);
+  //   //   // const fecha
+  //   //   // const trigger = new Date(fecha).getTime() + 24 * 60 * 60 * 1000;
+
+  //   //   //ENVIAR NOTIFICATION AL SIGUIENTE MINUTO
+  //   //   const trigger = new Date(Date.now() + 1 * 60 * 1000);
+
+  //   //   // const trigger = new Date("2023-02-03T08:03:32.352Z");
+
+  //   //   // var dateobj = new Date();
+
+  //   //   // var B = dateobj.toISOString();
+
+  //   //   // trigger.setMinutes(0);
+  //   //   // trigger.setSeconds(0);
+  //   //   // new Date('October 15, 1996 05:35:32');
+  //   //   console.log("Fecha Evento", eventosDetails.EventStartDate);
+  //   //   console.log("Fecha Seleccionada", B);
+  //   try {
+  //     const id = await Notification.scheduleNotificationAsync({
+  //       content: {
+  //         title: "Notificacion!",
+  //         body: "This is a test notification",
+  //       },
+  //       trigger,
+  //       // trigger: {
+  //       //   seconds: 5,
+  //       //   repeats: false,
+  //       // },
+  //     });
+  //     alert(`Notification shcedualed!, ${id}`);
+  //   } catch (err) {
+  //     alert("The notification failed to schedule, make sure the hour is valid");
+  //   }
+  // }
   //REGISTRARSE AL EVENTO
 
   async function eventRegister() {
@@ -195,7 +196,10 @@ const InfoEvent = (props) => {
       console.log("Registro del evento", route.params.EventStartDate);
       Alert.alert("", response.errorMsg);
       //ENVIAMOS NOTIFICATION
-      await handleNotification(route.params.EventStartDate);
+      await scheduleNotificationHandler(
+        route.params.EventStartDate,
+        route.params
+      );
       navigation.goBack();
       setLoading(false);
     } catch (error) {
@@ -219,7 +223,8 @@ const InfoEvent = (props) => {
       // console.log("error deleting event");
     }
   }
-  console.log(eventosDetails);
+
+  // console.log(eventosDetails);
 
   const images = [
     {
@@ -231,13 +236,16 @@ const InfoEvent = (props) => {
 
   const source = {
     html: `
-    <div style="text-align:justify;">
-    ${eventosDetails.PostContent}
+    <div style="
+    text-align: justify;
+    overflow: hidden;
+    box-sizing: border-box;">
+${eventosDetails.PostContent}
     </div>
     `,
   };
   const { width } = useWindowDimensions();
-
+  console.log("Dimension de pantalla", width);
   return (
     <>
       <KeyboardAwareScrollView>
@@ -280,17 +288,25 @@ const InfoEvent = (props) => {
                 {eventosDetails.EventName}
               </Text>
             </View>
-            <View style={styles.containerPostContent}>
+            <View>
               <TouchableOpacity onPress={() => setIsVisible(true)}>
                 <Image
                   style={styles.img}
                   source={{ uri: eventosDetails.imageurl }}
                 />
               </TouchableOpacity>
-              <Text style={{ fontSize: 30, textAlign: "center" }}>
+
+              <View
+                style={{
+                  alignItems: "center",
+                  marginHorizontal: 7,
+                  marginBottom: 20,
+                }}
+              >
                 <RenderHtml contentWidth={width} source={source} />
-              </Text>
-              <View style={styles.containerPostContent}>
+              </View>
+
+              <View style={{ marginHorizontal: 7 }}>
                 {route.params?.userID ? (
                   <TouchableOpacity
                     disabled={isLoading}
@@ -383,13 +399,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
     marginTop: 10,
-    marginBottom: 10,
-  },
-  containerPostContent: {
-    marginTop: 10,
-    // alignItems: "center",
-    // backgroundColor: "white",
-    marginHorizontal: 20,
   },
   link: {
     marginLeft: 10,
